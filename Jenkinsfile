@@ -2,29 +2,25 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables
         DOCKER_IMAGE = 'arvind005/java-app'
-        DOCKER_TAG = 'v02'
+        DOCKER_TAG = "jv${BUILD_NUMBER}"  // Dynamic tag with prefix 'jv'
         GIT_REPO = 'https://github.com/your-username/your-repo.git'
-        HELM_CHART_PATH = 'path/to/helm/chart' // Path to your Helm chart in the repo
+        HELM_CHART_PATH = 'helm/Java_Application'
     }
 
     stages {
-        // Stage 1: Build the code using Maven
         stage('Build') {
             steps {
                 sh 'mvn clean install'
             }
         }
 
-        // Stage 2: Run JUnit tests
         stage('Test') {
             steps {
                 sh 'mvn test'
             }
         }
 
-        // Stage 3: Build and push Docker image
         stage('Build and Push Docker Image') {
             steps {
                 script {
@@ -36,20 +32,19 @@ pipeline {
             }
         }
 
-        // Stage 4: Update Helm chart with the new Docker image tag
         stage('Update Helm Chart') {
             steps {
                 script {
-                    // Update the Helm values.yaml file with the new Docker image tag
+                    // Updated sed command to target the image tag precisely
                     sh """
-                    sed -i 's|tag:.*|tag: ${DOCKER_TAG}|g' ${HELM_CHART_PATH}/values.yaml
+                    sed -i '/image:/,/^[^ ]/ s|tag:.*|tag: ${DOCKER_TAG}|' ${HELM_CHART_PATH}/values.yaml
                     """
                     // Commit and push the updated Helm chart
                     sh """
-                    git config --global user.name 'Jenkins'
-                    git config --global user.email 'jenkins@example.com'
+                    git config --global user.name 'Arvindkarwal'
+                    git config --global user.email 'arvindkarwal002@gmail.com'
                     git add ${HELM_CHART_PATH}/values.yaml
-                    git commit -m 'Update Docker image tag to ${DOCKER_TAG}'
+                    git commit -m 'Update Docker image tag to jv${DOCKER_TAG}'
                     git push origin main
                     """
                 }
@@ -57,7 +52,6 @@ pipeline {
         }
     }
 
-    // Post-build actions
     post {
         success {
             echo 'Pipeline completed successfully!'
