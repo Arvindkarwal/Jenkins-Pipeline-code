@@ -2,4 +2,4 @@
 
 ## Pipeline Overview Depiction
 
-![Image](https://github.com/user-attachments/assets/f979f456-7577-4daf-90b9-be7f6a1efb72)
+![Image](https://github.com/user-attachments/assets/cd8d2772-48dd-489f-9ffb-69202aab3e14)
